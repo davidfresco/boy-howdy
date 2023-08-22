@@ -26,6 +26,8 @@ def test():
 def login():
     global reddit
     data = request.json
+    if data is None:
+        return jsonify({"error": "No data was received"}), 400
     if "username" in data and "password" in data:
         reddit.login(username=data["username"], password=data["password"])
     return "", 200
@@ -39,7 +41,7 @@ def set_page():
         reddit.set_page(page_name)
         return ""
     except KeyError:
-        return {"error": "usage: /reddit/setPage?pageName=<value>"}, 400
+        return jsonify({"error": "usage: /reddit/setPage?pageName=<value>"}), 400
 
 
 @app.route("/reddit/firstPage")
@@ -49,6 +51,6 @@ def first_page():
 
 
 @app.route("/reddit/nextPage")
-def first_page():
+def next_page():
     global reddit
     return jsonify([post.as_json() for post in reddit.next_page()])
