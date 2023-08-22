@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 from reddit import Reddit
 
 
-reddit = None
+reddit = Reddit()
 
 
 def _random_string(len):
@@ -31,13 +31,6 @@ def login():
     return "", 200
 
 
-@app.route("/reddit/startSession")
-def start_session():
-    global reddit
-    reddit = Reddit()
-    return "", 200
-
-
 @app.route("/reddit/setPage", methods=["POST"])
 def set_page():
     global reddit
@@ -53,3 +46,9 @@ def set_page():
 def first_page():
     global reddit
     return jsonify([post.as_json() for post in reddit.first_page()])
+
+
+@app.route("/reddit/nextPage")
+def first_page():
+    global reddit
+    return jsonify([post.as_json() for post in reddit.next_page()])
