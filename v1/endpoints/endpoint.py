@@ -66,7 +66,7 @@ class Endpoint:
             return data_validity
         return self.run_endpoint(request)
 
-    def run_endpoint(self, request):
+    def run_endpoint(self, request): # pyright: ignore
         return "", 200
 
 
@@ -79,11 +79,14 @@ if __name__ == "__main__":
         },
         "footer": str
     }
-    good_data = {"body":{"data":{"value1":1,"val2":2,},"integer":2,},"footer":"message lol"}
+    good_data = {"body":{"data":{"value1":1,"val2":2,},"integer":2,},
+                 "footer":"message lol"}
     bad_dict = {"body":{"data":"dict","integer":2,},"footer":"message lol"}
-    bad_int = {"body":{"data":{"value1":1,"val2":2,},"integer":"a",},"footer":"message lol"}
+    bad_int = {"body":{"data":{"value1":1,"val2":2,},"integer":"a",},
+               "footer":"message lol"}
     bad_str = {"body":{"data":{"value1":1,"val2":2,},"integer":1,},"footer":5}
-    unknown_key = {"header":{},"body":{"data":{"value1":1,"val2":2,},"integer":1,},"footer":5}
+    unknown_key = {"header":{},"body":{"data":{"value1":1,"val2":2,},
+                                       "integer":1,},"footer":5}
     missing_key = {"body":{"data":{"value1":1,"val2":2,}},"footer":"sdfg"}
 
     endpoint = Endpoint(data_schema=schema)
