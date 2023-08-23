@@ -2,6 +2,8 @@ import time
 import pickle
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 from reddit.pages.homepage import Homepage
 from reddit.pages.subreddit import Subreddit
@@ -10,15 +12,19 @@ from reddit.pages.subreddit import Subreddit
 class Reddit:
 
     LOGIN_COOKIES = ["loid", "token_v2" "csv", "edgebucket", "reddit_session",
-                     "session_tracker", "session", "token_v2", "wwrbucket"]
+                     "session_tracker", "token_v2", "wwrbucket"]
     COOKIES_FILE = "cookies.pkl"
 
-    def __init__(self, username=None, password=None, cookies=None):
+    def __init__(self, username=None, password=None, cookies=None,
+                 headless=True):
         options = webdriver.ChromeOptions()
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
-        options.add_argument("--headless")
-        self._driver = webdriver.Chrome(chrome_options=options)
+        if headless:
+            options.add_argument("--headless")
+        self._driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()),
+            chrome_options=options)
         self._driver.get("https://www.reddit.com/login")
         try:
             if cookies is None:
@@ -32,6 +38,7 @@ class Reddit:
             "homepage": Homepage,
             "subreddit": Subreddit
         }
+        self._current_page = Homepage(self._driver)
 
     def set_page(self, page_type, page_data=None):
         new_page = self._pages[page_type](self._driver, page_data)
@@ -51,9 +58,11 @@ class Reddit:
         return elem
 
     def login(self, username, password):
-        print("logging in...")
         if username is None or password is None:
-            raise Exception("no credentials supplied for login")
+            # raise Exception("no credentials supplied for login")
+            print("remaining logged out")
+            return
+        print("logging in...")
         self._driver.get("https://www.reddit.com/login")
         username_field = self._get_elem("//input[@id='loginUsername']")
         password_field = self._get_elem("//input[@id='loginPassword']")
