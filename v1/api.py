@@ -41,7 +41,8 @@ def set_page():
         reddit.set_page(page_name)
         return ""
     except KeyError:
-        return jsonify({"error": "usage: /reddit/setPage?pageName=<value>"}), 400
+        body = {"error": "usage: /reddit/setPage?pageName=<value>"}
+        return jsonify(body), 400
 
 
 @app.route("/reddit/firstPage")
