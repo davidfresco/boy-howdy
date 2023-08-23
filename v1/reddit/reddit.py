@@ -32,6 +32,7 @@ class Reddit:
             for cookie in cookies:
                 if cookie["name"] in self.LOGIN_COOKIES:
                     self._driver.add_cookie(cookie)
+            self.logged_in = True
         except Exception:
             self.login(username, password)
         self._pages = {
@@ -61,6 +62,7 @@ class Reddit:
         if username is None or password is None:
             # raise Exception("no credentials supplied for login")
             print("remaining logged out")
+            self.logged_in = False
             return
         print("logging in...")
         self._driver.get("https://www.reddit.com/login")
@@ -72,4 +74,5 @@ class Reddit:
         login_button.click()
         time.sleep(1)
         pickle.dump(self._driver.get_cookies(), open(self.COOKIES_FILE, "wb"))
+        self.logged_in = True
         print("logged in")
