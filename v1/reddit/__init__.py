@@ -1,1 +1,1 @@
-from reddit.reddit import Reddit
+from reddit.reddit import Reddit # pyright: ignore

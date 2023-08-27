@@ -10,7 +10,7 @@ from reddit.pages.utils.request_utils import get_target_request_body
 
 class StaticPage(Page):
 
-    def __init__(self, driver, *args, **kwargs):
+    def __init__(self, driver, *args, **kwargs): # pyright: ignore
         Page.__init__(self, driver)
 
     def _get_url(self) -> str:
