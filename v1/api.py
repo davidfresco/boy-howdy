@@ -33,15 +33,25 @@ def login():
     return "", 200
 
 
+@app.route("/reddit/isLoggedIn", methods=["GET"])
+def is_logged_in():
+    global reddit
+    return {"login_status": reddit.logged_in}, 200
+
+
 @app.route("/reddit/setPage", methods=["POST"])
 def set_page():
     global reddit
     try:
-        page_name = request.args["pageName"]
-        reddit.set_page(page_name)
+        args = request.args
+        page_name = args["pageType"]
+        page_data = args["data"] if "data" in args.keys() else None
+        reddit.set_page(page_name, page_data)
         return ""
     except KeyError:
-        body = {"error": "usage: /reddit/setPage?pageName=<value>"}
+        page_types = "|".join(reddit._pages.keys())
+        body = {"error": (f"usage: /reddit/setPage?pageType=[{page_types}]"
+                          "e.g.: pageType=subreddit&data=neovim")}
         return jsonify(body), 400
 
 
