@@ -20,6 +20,9 @@ class Reddit:
         options = webdriver.ChromeOptions()
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
+        options.add_argument("--no-sandbox")
+        options.add_argument("--enable-logging")
+        options.add_argument("--v=1")
         if headless:
             options.add_argument("--headless")
         self._driver = webdriver.Chrome(
@@ -61,10 +64,8 @@ class Reddit:
     def login(self, username, password):
         if username is None or password is None:
             # raise Exception("no credentials supplied for login")
-            print("remaining logged out")
             self.logged_in = False
             return
-        print("logging in...")
         self._driver.get("https://www.reddit.com/login")
         username_field = self._get_elem("//input[@id='loginUsername']")
         password_field = self._get_elem("//input[@id='loginPassword']")
@@ -75,4 +76,3 @@ class Reddit:
         time.sleep(1)
         pickle.dump(self._driver.get_cookies(), open(self.COOKIES_FILE, "wb"))
         self.logged_in = True
-        print("logged in")
